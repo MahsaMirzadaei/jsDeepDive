@@ -1,0 +1,358 @@
+:root {
+  --bg-color: #1e1e2f;
+  --container-bg: #27293d;
+  --box-bg: #1b1c2b;
+  --primary-color: #4fc3f7;
+  --text-color: #dcdcdc;
+  --border-color: #4a4e69;
+  --sync-color: #81c784;
+  --micro-color: #ffd54f;
+  --macro-color: #ff8a65;
+  --heap-color: #9575cd;
+  --worker-color: #64b5f6;
+  --active-color: #ff80ff;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 1vw;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-container {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 2;
+  max-width: 600px;
+  min-width: 450px;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 3;
+}
+
+header {
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+header h1 {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 5px;
+  background-color: var(--container-bg);
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.tab-btn {
+  flex-grow: 1;
+  text-align: center;
+  background-color: transparent;
+  color: var(--text-color);
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.tab-btn.active {
+  background-color: var(--active-color);
+  color: white;
+  font-weight: bold;
+}
+
+.content-area {
+  flex-grow: 1;
+  position: relative;
+}
+
+.code-block {
+  background-color: var(--container-bg);
+  border-radius: 8px;
+  padding: 20px;
+  border: 2px solid var(--border-color);
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: border-color 0.4s ease;
+}
+
+.code-block.active {
+  display: flex;
+}
+
+.code-block h3 {
+  color: var(--text-color);
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  text-align: center;
+  transition: color 0.4s ease;
+}
+
+pre {
+  background-color: var(--box-bg);
+  padding: 15px;
+  border-radius: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  flex-grow: 1;
+  font-size: 14px;
+  margin: 0;
+  overflow-y: auto;
+}
+
+code {
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+.controls-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.controls-wrapper button {
+  flex-grow: 1;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.run-btn {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  flex-grow: 2;
+}
+
+.pause-resume-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.reset-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+button:disabled {
+  background-color: #555 !important;
+  color: #888 !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.code-block.is-running {
+  border-color: var(--active-color);
+}
+
+.code-block.is-running h3 {
+  color: var(--active-color);
+}
+
+.code-block.is-running .run-btn {
+  background-color: var(--active-color);
+}
+
+.code-split {
+  display: flex;
+  gap: 10px;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.code-split > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-split h4 {
+  margin: 0 0 5px 0;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.visualization-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 15px;
+  height: 100%;
+}
+
+.engine-box {
+  background-color: var(--container-bg);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.engine-box h2 {
+  text-align: center;
+  margin: 0 0 10px 0;
+  padding-bottom: 8px;
+  font-size: 1rem;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.box {
+  flex-grow: 1;
+  background-color: var(--box-bg);
+  border-radius: 5px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+
+#call-stack,
+#worker-call-stack {
+  flex-direction: column-reverse;
+}
+
+#call-stack-box {
+  grid-row: 1 / 4;
+}
+
+#worker-thread-box {
+  display: none;
+}
+
+body.worker-view-active #call-stack-box {
+  grid-row: 1 / 3;
+}
+
+body.worker-view-active #worker-thread-box {
+  display: flex;
+  grid-row: 3 / 4;
+}
+
+#worker-thread-box,
+#worker-thread-box h2 {
+  border-color: var(--worker-color);
+  color: var(--worker-color);
+}
+
+#macrotask-queue-box,
+#macrotask-queue-box h2 {
+  border-color: var(--macro-color);
+  color: var(--macro-color);
+}
+
+#microtask-queue-box,
+#microtask-queue-box h2 {
+  border-color: var(--micro-color);
+  color: var(--micro-color);
+}
+
+#call-stack-box,
+#call-stack-box h2 {
+  border-color: var(--sync-color);
+  color: var(--sync-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.task-item,
+.heap-item {
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #111;
+  transition: all 0.4s ease-in-out;
+  flex-shrink: 0;
+}
+
+.task-item.is-fading-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.task-item.is-moving {
+  position: absolute;
+  z-index: 1000;
+  opacity: 0.9;
+  transform: scale(1.05);
+  pointer-events: none;
+  transition:
+    top 0.6s ease-in-out,
+    left 0.6s ease-in-out,
+    width 0.6s ease-in-out;
+}
+
+.task-item.sync {
+  background-color: var(--sync-color);
+}
+
+.task-item.micro {
+  background-color: var(--micro-color);
+}
+
+.task-item.macro {
+  background-color: var(--macro-color);
+}
+
+.task-item.worker {
+  background-color: var(--worker-color);
+}
+
+.heap-item {
+  background-color: var(--heap-color);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.task-item.is-completed {
+  opacity: 0.5;
+}

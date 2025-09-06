@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Runtime Visualizer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <aside class="left-panel">
+        <header>
+          <h1>JS Visualizer</h1>
+        </header>
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="scenario-timeout">
+            setTimeout
+          </button>
+          <button class="tab-btn" data-target="scenario-promise">
+            Promise
+          </button>
+          <button class="tab-btn" data-target="scenario-async">
+            Async/Await
+          </button>
+          <button class="tab-btn" data-target="scenario-complex">
+            Complex Async
+          </button>
+          <button class="tab-btn" data-target="scenario-priority">
+            Priority Demo
+          </button>
+          <button class="tab-btn" data-target="scenario-worker">
+            Web Worker
+          </button>
+        </div>
+        <div class="content-area">
+          <div class="code-block active" id="scenario-timeout">
+            <h3>setTimeout</h3>
+            <pre><code></code></pre>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="timeout">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+          <div class="code-block" id="scenario-promise">
+            <h3>Promise</h3>
+            <pre><code></code></pre>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="promise">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+          <div class="code-block" id="scenario-async">
+            <h3>Async/Await</h3>
+            <pre><code></code></pre>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="async">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+          <div class="code-block" id="scenario-complex">
+            <h3>Complex Async</h3>
+            <pre><code></code></pre>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="complex">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+          <div class="code-block" id="scenario-priority">
+            <h3>Priority Demo</h3>
+            <pre><code></code></pre>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="priority">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+          <div class="code-block" id="scenario-worker">
+            <h3>Web Worker</h3>
+            <div class="code-split">
+              <div>
+                <h4>Main Thread</h4>
+                <pre><code id="worker-main-code"></code></pre>
+              </div>
+              <div>
+                <h4>Worker Thread</h4>
+                <pre><code id="worker-thread-code"></code></pre>
+              </div>
+            </div>
+            <div class="controls-wrapper">
+              <button class="run-btn" data-run="worker">Run</button>
+              <button class="pause-resume-btn">Pause</button>
+              <button class="reset-btn">Reset</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="right-panel">
+        <div class="visualization-area">
+          <div class="engine-box" id="call-stack-box">
+            <h2>Call Stack</h2>
+            <div class="box" id="call-stack"></div>
+          </div>
+          <div class="engine-box" id="worker-thread-box">
+            <h2>Worker Thread</h2>
+            <div class="box" id="worker-call-stack"></div>
+          </div>
+          <div class="engine-box" id="heap-box">
+            <h2>Heap</h2>
+            <div class="box" id="heap"></div>
+          </div>
+          <div class="engine-box" id="microtask-queue-box">
+            <h2>Microtask Queue</h2>
+            <div class="box" id="microtask-queue"></div>
+          </div>
+          <div class="engine-box" id="macrotask-queue-box">
+            <h2>Macrotask Queue</h2>
+            <div class="box" id="macrotask-queue"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Presentation Outline</title>
+    <style>
+      :root {
+        --bg-color: #1e1e2f;
+        --container-bg: #27293d;
+        --box-bg: #1b1c2b;
+        --primary-color: #4fc3f7;
+        --text-color: #dcdcdc;
+        --border-color: #4a4e69;
+        --active-color: #ff80ff;
+        --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-family);
+        margin: 0;
+        padding: 2rem;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: var(--container-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+      }
+
+      h1,
+      h2 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        margin-top: 0;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        color: var(--active-color);
+        border-bottom-color: var(--active-color);
+        font-size: 1.8rem;
+        margin-top: 2.5rem;
+      }
+
+      h3 {
+        color: var(--primary-color);
+        margin-top: 2rem;
+        font-size: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+      }
+
+      h4 {
+        color: var(--primary-color);
+        margin-top: 0;
+        font-size: 1.2rem;
+      }
+
+      ul {
+        list-style-type: square;
+        padding-left: 20px;
+      }
+
+      li {
+        margin-bottom: 0.75rem;
+      }
+
+      code {
+        background-color: var(--box-bg);
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+      }
+
+      .example-card {
+        background-color: var(--box-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .example-card p {
+        margin-top: 0;
+      }
+
+      pre {
+        background-color: #111;
+        padding: 15px;
+        border-radius: 5px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 14px;
+        border: 1px solid var(--border-color);
+        color: #eee;
+      }
+
+      .note {
+        font-style: italic;
+        color: #aaa;
+        font-size: 0.9em;
+        margin-bottom: 1rem;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>JavaScript Under the Hood</h1>
+      <p style="text-align: center; font-size: 1.2rem">
+        Memory, Concurrency, and the Event Loop
+      </p>
+      <hr style="border-color: var(--border-color); margin: 2rem 0" />
+
+      <h2>1. The "Why": Why This Topic Matters</h2>
+      <ul>
+        <li>
+          Start with the key question: "JS is single-threaded, so how does it
+          handle thousands of operations without freezing the UI?"
+        </li>
+        <li>
+          Briefly explain the "single-threaded" concept and the risk of
+          blocking.
+        </li>
+        <li>
+          Introduce the JavaScript Concurrency Model and the Event Loop as the
+          solution.
+        </li>
+      </ul>
+
+      <h2>2. The Runtime Components</h2>
+      <ul>
+        <li>
+          <b>The Call Stack:</b> The place for code execution. Explain the LIFO
+          (Last-In, First-Out) principle.
+        </li>
+        <li>
+          <b>The Heap:</b> The memory space for storing variables, objects, and
+          functions.
+        </li>
+        <li>
+          <b>The Queues:</b> The "waiting rooms" for code that will run later.
+          <ul>
+            <li>
+              <b>Macrotask Queue:</b> For tasks like <code>setTimeout</code> and
+              user events.
+            </li>
+            <li>
+              <b>Microtask Queue:</b> For high-priority tasks related to
+              Promises.
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2>3. The Conductor: The Event Loop</h2>
+      <ul>
+        <li>The Event Loop constantly checks: "Is the Call Stack empty?"</li>
+        <li>
+          <b>The Golden Rule of Priority:</b>
+          <ol>
+            <li>
+              After the current task finishes, execute **ALL** tasks in the
+              **Microtask Queue**.
+            </li>
+            <li>
+              Only when the Microtask Queue is completely empty, take **ONE**
+              task from the **Macrotask Queue** to run.
+            </li>
+            <li>Repeat the cycle.</li>
+          </ol>
+        </li>
+      </ul>
+
+      <h2>4. Microtasks vs. Macrotasks: A Practical Guide</h2>
+      <h3>Common Microtasks (High Priority) ⚡️</h3>
+
+      <div class="example-card">
+        <h4>1. <code>Promise.then() / .catch() / .finally()</code></h4>
+
+        <p>Promise callbacks are the most fundamental source of Microtasks.</p>
+
+        <pre><code>console.log('Start');
+
+Promise.resolve().then(() => {
+
+console.log('This is a Microtask');
+
+});
+
+console.log('End');</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+
+Start
+
+End
+
+This is a Microtask</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>2. Code after an <code>await</code></h4>
+
+        <p>
+          The "continuation" of a function after an <code>await</code> is queued
+          as a Microtask.
+        </p>
+
+        <pre><code>async function test() {
+
+console.log('Start');
+
+await Promise.resolve();
+
+console.log('This is also a Microtask');
+
+}
+
+test();
+
+console.log('End');</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+
+Start
+
+End
+
+This is also a Microtask</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>3. <code>queueMicrotask()</code></h4>
+
+        <p>
+          An explicit method for scheduling a Microtask without creating a
+          Promise.
+        </p>
+
+        <pre><code>console.log('1. Sync Code Start');
+
+setTimeout(() => {
+  console.log('4. Macrotask (setTimeout)');
+}, 0);
+
+queueMicrotask(() => {
+  console.log('3. Microtask (queueMicrotask)');
+});
+
+console.log('2. Sync Code End');</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+1. Sync Code Start
+2. Sync Code End
+3. Microtask (queueMicrotask)
+4. Macrotask (setTimeout)</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>4. <code>MutationObserver</code> Callbacks</h4>
+
+        <p>The callback for observing DOM changes runs as a Microtask.</p>
+
+        <pre><code>&lt;!-- Required HTML --&gt;
+
+&lt;div id="observer-test"&gt;&lt;/div&gt;
+
+
+
+&lt;script&gt;
+
+const targetNode = document.getElementById('observer-test');
+
+const observer = new MutationObserver(() => {
+
+console.log('DOM changed! (Microtask)');
+
+});
+
+observer.observe(targetNode, { childList: true });
+
+targetNode.textContent = 'Hello'; // This change queues the microtask
+
+&lt;/script&gt;</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>DOM changed! (Microtask)</pre>
+      </div>
+
+      <div class="example-card">
+        <h4>5. <code>process.nextTick()</code> (in Node.js)</h4>
+
+        <p class="note">(This code only works in a Node.js environment)</p>
+
+        <p>
+          This task has an even higher priority than regular Microtasks in
+          Node.js.
+        </p>
+
+        <pre><code>Promise.resolve().then(() => console.log('Microtask (Promise)'));
+
+process.nextTick(() => console.log('Even higher priority! (nextTick)'));</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+
+Even higher priority! (nextTick)
+
+Microtask (Promise)</pre
+        >
+      </div>
+
+      <h3>Common Macrotasks (Standard Priority) 🐌</h3>
+
+      <div class="example-card">
+        <h4>1. <code>setTimeout()</code> / <code>setInterval()</code></h4>
+
+        <p>
+          The classic Macrotask. The callback is queued after the timer
+          finishes.
+        </p>
+
+        <pre><code>console.log('Start');
+
+setTimeout(() => {
+
+console.log('This is a Macrotask');
+
+}, 0);
+
+console.log('End');</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+
+Start
+
+End
+
+This is a Macrotask</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>2. User Events (e.g., <code>click</code>)</h4>
+
+        <p>User interactions, like clicks, queue a Macrotask.</p>
+
+        <pre><code>&lt;!-- Required HTML --&gt;
+
+&lt;button id="my-btn"&gt;Click Me&lt;/button&gt;
+
+&lt;script&gt;
+
+const btn = document.getElementById('my-btn');
+
+btn.addEventListener('click', () => {
+
+console.log('Button was clicked! (Macrotask)');
+
+});
+
+&lt;/script&gt;</code></pre>
+
+        <p><b>Output (after a click):</b></p>
+
+        <pre>Button was clicked! (Macrotask)</pre>
+      </div>
+
+      <div class="example-card">
+        <h4>3. I/O Operations</h4>
+        <p>
+          I/O stands for <strong>Input/Output</strong>. It refers to any
+          operation where your program needs to communicate with a system
+          outside of the main CPU and RAM.
+        </p>
+        <p>
+          In simple terms, whenever your program has to wait for a slow,
+          external resource, it's performing an I/O operation. These external
+          resources can include:
+        </p>
+        <ul>
+          <li>
+            <b>Network:</b> Sending a request to another server and waiting for
+            a response (e.g., <code>fetch</code>).
+          </li>
+          <li>
+            <b>File System:</b> Reading data from or writing data to a hard
+            drive.
+          </li>
+          <li>
+            <b>Database:</b> Sending a query to a database and waiting for the
+            result.
+          </li>
+          <li>
+            <b>Hardware:</b> Communicating with devices like printers, sensors,
+            etc.
+          </li>
+        </ul>
+        <p>
+          <b>Key takeaway:</b> I/O operations are thousands of times slower than
+          CPU operations. If single-threaded JavaScript waited for these tasks,
+          the application would completely freeze.
+        </p>
+
+        <p class="note">(This code only works in a Node.js environment)</p>
+
+        <p>
+          The callback for I/O operations (like reading a file) is queued as a
+          Macrotask.
+        </p>
+
+        <pre><code>const fs = require('fs');
+
+console.log('Requesting file read...');
+
+fs.readFile('./file.txt', 'utf8', () => {
+
+console.log('File has been read! (Macrotask)');
+
+});</code></pre>
+
+        <p><b>Output:</b></p>
+
+        <pre>
+
+Requesting file read...
+
+File has been read! (Macrotask)</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>4. <code>setImmediate()</code> (in Node.js)</h4>
+        <p>
+          <code>setImmediate()</code> is a Node.js-specific function that
+          schedules a callback to execute in the "check" phase of the Event
+          Loop. It is considered a <strong>Macrotask</strong>.
+        </p>
+        <p>
+          In simple terms, <code>setImmediate()</code> tells the Node.js engine:
+          "As soon as you finish the current I/O operations, and before you get
+          to the next timers, run this function."
+        </p>
+
+        <hr style="border-color: var(--border-color); margin: 1rem 0" />
+
+        <p>
+          <b
+            >Key Difference: <code>setImmediate()</code> vs.
+            <code>setTimeout(fn, 0)</code></b
+          >
+        </p>
+        <p>
+          While they seem similar, their timing differs based on the Node.js
+          Event Loop phases:
+        </p>
+        <ul>
+          <li>
+            <code>setTimeout(fn, 0)</code> schedules the callback for the
+            <b>"timers"</b> phase, which runs at the beginning of an event loop
+            tick.
+          </li>
+          <li>
+            <code>setImmediate(fn)</code> schedules the callback for the
+            <b>"check"</b> phase, which runs right after the <b>"poll"</b> (I/O)
+            phase.
+          </li>
+        </ul>
+
+        <p><b>Example 1: Inside an I/O Callback (Predictable Behavior)</b></p>
+        <p>
+          When called from within an I/O callback,
+          <code>setImmediate()</code> is guaranteed to execute first.
+        </p>
+
+        <p class="note">(This code only works in a Node.js environment)</p>
+        <pre><code>const fs = require('fs');
+
+fs.readFile(__filename, () => {
+  console.log('--- Inside I/O Callback ---');
+
+  setTimeout(() => {
+    console.log('setTimeout runs in the next event loop tick');
+  }, 0);
+
+  setImmediate(() => {
+    // We are in the I/O phase, so the next phase is "check".
+    // Therefore, this function executes immediately.
+    console.log('setImmediate runs right after I/O');
+  });
+});</code></pre>
+        <p><b>Guaranteed Output:</b></p>
+        <pre>
+--- Inside I/O Callback ---
+setImmediate runs right after I/O
+setTimeout runs in the next event loop tick</pre
+        >
+
+        <p><b>Example 2: In the Main Module (Unpredictable Behavior)</b></p>
+        <p>
+          When called in the main script, the execution order is not guaranteed
+          and depends on process performance.
+        </p>
+        <pre><code>setImmediate(() => console.log('I am Immediate'));
+setTimeout(() => console.log('I am Timeout'), 0);</code></pre>
+        <p><b>Possible Output:</b></p>
+        <pre>
+// Run 1:
+I am Immediate
+I am Timeout
+
+// Run 2:
+I am Timeout
+I am Immediate</pre
+        >
+      </div>
+
+      <div class="example-card">
+        <h4>5. UI Rendering Tasks</h4>
+
+        <p>
+          The browser's own process of updating and repainting the screen is
+          treated as a Macrotask.
+        </p>
+
+        <pre><code>// Conceptual Example
+
+element.style.color = 'blue'; // DOM change
+
+
+
+Promise.resolve().then(() => {
+
+// This microtask runs BEFORE the next render
+
+console.log('Color changed, but user has not seen it yet.');
+
+});
+
+
+
+// In a later tick, the browser executes a "render" macrotask
+
+// and the user finally sees the blue color.</code></pre>
+      </div>
+
+      <h2>5. Web APIs: The Browser's Superpowers</h2>
+      <p>
+        Web APIs are functionalities provided by the browser that allow your
+        JavaScript to perform tasks it can't do on its own, like timers and
+        network requests.
+      </p>
+      <img
+        src="./webapi.png"
+        alt="Diagram of JavaScript Engine, Web APIs, and Event Loop"
+        style="
+          width: 100%;
+          max-width: 700px;
+          display: block;
+          margin: 20px auto;
+          border-radius: 8px;
+          border: 1px solid var(--border-color);
+        "
+      />
+
+      <h2>6. Live Demo with the Simulator</h2>
+      <ul>
+        <li>
+          <b>Scenario 1: `setTimeout`</b> - Demonstrating the Macrotask Queue.
+        </li>
+        <li>
+          <b>Scenario 2: `Promise`</b> - Demonstrating the Microtask Queue.
+        </li>
+        <li>
+          <b>Scenario 3: `async/await`</b> - Showing it's syntactic sugar for
+          Promises.
+        </li>
+        <li>
+          <b>Scenario 4: Complex Async</b> - The interaction between macrotasks
+          and microtasks.
+        </li>
+        <li>
+          <b>Scenario 5: Priority Demo</b> - Proving Microtasks **always** run
+          before Macrotasks.
+        </li>
+      </ul>
+
+      <h2>8. Conclusion & Key Takeaways</h2>
+      <ul>
+        <li>
+          JavaScript achieves concurrency with a single thread thanks to the
+          Event Loop.
+        </li>
+        <li>
+          Microtasks (Promises) have priority over Macrotasks (setTimeout).
+        </li>
+        <li>
+          Understanding this model helps you write better, non-blocking code and
+          debug complex async issues.
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

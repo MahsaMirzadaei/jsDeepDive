@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JS Presentation Outline - Full Version</title>
+  <style>
+    :root {
+      --bg-color: #1e1e2f;
+      --container-bg: #27293d;
+      --box-bg: #1b1c2b;
+      --primary-color: #4fc3f7;
+      --text-color: #dcdcdc;
+      --border-color: #4a4e69;
+      --active-color: #ff80ff;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.8;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: var(--container-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem 3rem;
+    }
+
+    h1, h2 {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+
+    h1 { text-align: center; font-size: 2.5rem; }
+    h2 { color: var(--active-color); border-bottom-color: var(--active-color); font-size: 1.8rem; margin-top: 3rem; }
+    h3 { color: var(--primary-color); margin-top: 2.5rem; font-size: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+    h4 { color: var(--primary-color); margin-top: 0; font-size: 1.2rem; }
+
+    ul { list-style-type: square; padding-right: 20px; }
+    li { margin-bottom: 1rem; }
+
+    p {
+      text-align: justify;
+    }
+
+    code {
+      background-color: var(--box-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .example-card {
+      background-color: var(--box-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .example-card p { margin-top: 0; }
+
+    pre {
+      background-color: #111;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 14px;
+      border: 1px solid var(--border-color);
+      color: #eee;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .note {
+      font-style: italic;
+      color: #aaa;
+      font-size: 0.9em;
+      margin-bottom: 1rem;
+      display: block;
+      border-right: 3px solid var(--border-color);
+      padding-right: 10px;
+    }
+  </style>
+</head>
+<body dir="rtl">
+<div class="container">
+  <h1>سفر به اعماق جاوا اسکریپت</h1>
+  <p style="text-align: center; font-size: 1.2rem">مدیریت حافظه، همروندی و حلقه رویداد (Event Loop)</p>
+  <hr style="border-color: var(--border-color); margin: 2rem 0" />
+
+  <h2>۱. مقدمه: چرا این موضوع مهم است؟</h2>
+  <p>جاوا اسکریپت یک زبان <strong>تک‌رشته‌ای (Single-Threaded)</strong> است. این یعنی در هر لحظه فقط و فقط یک دستور را می‌تواند اجرا کند. این ویژگی باعث سادگی در مدیریت وضعیت برنامه می‌شود اما یک چالش بزرگ ایجاد می‌کند: اگر یک عملیات زمان‌بر (مانند دریافت داده از یک سرور دور) در حال اجرا باشد، کل رشته اصلی مسدود (block) می‌شود. در محیط مرورگر، این به معنای فریز شدن کامل رابط کاربری (UI) است؛ دیگر هیچ کلیکی ثبت نمی‌شود، هیچ انیمیشنی اجرا نمی‌شود و صفحه کاملاً غیرپاسخگو به نظر می‌رسد.</p>
+  <p>سوال کلیدی این است: "چطور جاوا اسکریپت با وجود این محدودیت، می‌تواند اپلیکیشن‌های مدرن و سریعی بسازد که هزاران عملیات را بدون فریز شدن مدیریت می‌کنند؟"</p>
+  <p>پاسخ در <strong>مدل همروندی (Concurrency Model)</strong> و <strong>حلقه رویداد (Event Loop)</strong> نهفته است. جاوا اسکریپت با واگذاری هوشمندانه کارهای زمان‌بر به محیط اجرایی (مرورگر یا Node.js) و مدیریت نتایج آن‌ها از طریق یک سیستم نوبت‌دهی، رشته اصلی را برای کارهای مهم‌تر (مانند پاسخ به کاربر) آزاد نگه می‌دارد. درک این مکانیزم برای هر توسعه‌دهنده جدی جاوا اسکریپت ضروری است.</p>
+
+  <h2>۲. اجزای اصلی محیط اجرایی</h2>
+  <p>برای درک این فرآیند، ابتدا باید با اجزای اصلی محیط اجرایی جاوا اسکریپت آشنا شویم:</p>
+  <ul>
+    <li>
+      <b>The Call Stack (پشته فراخوانی):</b>
+      <p>این بخش مانند میز کار اصلی برنامه شماست. هرگاه تابعی فراخوانی می‌شود، یک "فریم" (Stack Frame) برای آن در بالای این پشته قرار می‌گیرد. این ساختار از اصل <strong>LIFO (آخرین ورودی، اولین خروجی)</strong> پیروی می‌کند؛ یعنی آخرین تابعی که وارد پشته شده، اولین تابعی است که باید کارش تمام شده و از پشته خارج شود. تمام کدهای همزمان (Synchronous) در اینجا اجرا می‌شوند.</p>
+    </li>
+    <li>
+      <b>The Heap (حافظه هیپ):</b>
+      <p>هیپ مانند یک انبار بزرگ و نامنظم است. تمام داده‌های پیچیده و با اندازه نامشخص برنامه شما (آبجکت‌ها، آرایه‌ها و توابع) در این قسمت از حافظه ذخیره می‌شوند. متغیرها در Call Stack فقط آدرسی (reference) به این داده‌ها در Heap را نگهداری می‌کنند. این فضا توسط <strong>Garbage Collector</strong> مدیریت می‌شود.</p>
+    </li>
+    <li>
+      <b>The Queues (صف‌ها):</b>
+      <p>اینها اتاق‌های انتظار برای کدهایی هستند که منتظرند تا نوبت اجرایشان فرا برسد. این صف‌ها توسط Web APIها پر می‌شوند و توسط Event Loop مدیریت می‌شوند.
+      <ul>
+        <li><b>Macrotask Queue (صف تسک‌های کلان):</b> برای کارهای با اولویت استاندارد مانند کالبک‌های <code>setTimeout</code>، رویدادهای کاربر (کلیک) و عملیات ورودی/خروجی (I/O). در هر چرخه Event Loop، **فقط یک** تسک از این صف (در صورت وجود) اجرا می‌شود.</li>
+        <li><b>Microtask Queue (صف تسک‌های خرد):</b> برای کارهای فوری و با اولویت بسیار بالا که عمدتاً به Promiseها مرتبط هستند (مثل کالبک‌های <code>.then()</code> و کدهای بعد از <code>await</code>).</li>
+      </ul>
+      </p>
+    </li>
+  </ul>
+
+  <h2>۳. رهبر ارکستر: حلقه رویداد (Event Loop)</h2>
+  <p>Event Loop یک فرآیند ساده اما حیاتی است که به طور مداوم در پس‌زمینه اجرا می‌شود و وظیفه هماهنگی بین Call Stack و صف‌ها را بر عهده دارد.</p>
+  <ol>
+    <li>Event Loop دائماً چک می‌کند: "آیا Call Stack خالی است؟"</li>
+    <li>به محض خالی شدن Call Stack، بلافاصله به سراغ <strong>Microtask Queue</strong> می‌رود و **تمام تسک‌های موجود در آن** را بدون وقفه اجرا می‌کند تا این صف **کاملاً خالی** شود.</li>
+    <li>فقط زمانی که صف Microtask خالی شد، به سراغ <strong>Macrotask Queue</strong> می‌رود و **فقط یک** تسک از ابتدای آن را برای اجرا به Call Stack منتقل می‌کند.</li>
+    <li>پس از اجرای آن یک Macrotask، چرخه دوباره از مرحله ۱ تکرار می‌شود.</li>
+  </ol>
+
+  <h2>۴. Microtasks در برابر Macrotasks: راهنمای عملی</h2>
+
+  <h3>Common Microtasks (اولویت بالا) ⚡️</h3>
+
+  <div class="example-card">
+    <h4>۱. <code>Promise.then() / .catch() / .finally()</code></h4>
+    <p>کالبک‌هایی که به این متدها پاس داده می‌شوند، پایه‌ای‌ترین منبع ایجاد Microtask هستند. وقتی یک Promise به نتیجه می‌رسد، کالبک آن در صف Microtask قرار می‌گیرد.</p>
+    <pre><code>console.log('Start');
+Promise.resolve().then(() => {
+  console.log('This is a Microtask');
+});
+console.log('End');</code></pre>
+    <p><b>خروجی:</b></p>
+    <pre><code>Start
+End
+This is a Microtask</code></pre>
+  </div>
+
+  <div class="example-card">
+    <h4>۲. کد بعد از <code>await</code></h4>
+    <p>"ادامه تابع" (Continuation) بعد از <code>await</code> مانند یک کالبک <code>.then()</code> به عنوان یک Microtask در صف قرار می‌گیرد.</p>
+    <pre><code>async function test() {
+  console.log('Start');
+  await Promise.resolve();
+  console.log('This is also a Microtask');
+}
+test();
+console.log('End');</code></pre>
+    <p><b>خروجی:</b></p>
+    <pre><code>Start
+End
+This is also a Microtask</code></pre>
+  </div>
+
+  <div class="example-card">
+    <h4>۳. <code>queueMicrotask()</code></h4>
+    <p>روشی صریح و مستقیم برای زمان‌بندی یک Microtask بدون نیاز به ساخت Promise. این تابع برای مواقعی مفید است که می‌خواهید کاری را قبل از رندر بعدی صفحه و با اولویت بالا انجام دهید.</p>
+    <pre><code>console.log('Start');
+queueMicrotask(() => {
+  console.log('An explicit Microtask!');
+});
+console.log('End');</code></pre>
+    <p><b>خروجی:</b></p>
+    <pre><code>Start
+End
+An explicit Microtask!</code></pre>
+  </div>
+
+  <h3>Common Macrotasks (اولویت استاندارد) 🐌</h3>
+
+  <div class="example-card">
+    <h4>۱. <code>setTimeout()</code> / <code>setInterval()</code></h4>
+    <p>کلاسیک‌ترین نمونه Macrotask. مرورگر تایمر را در پس‌زمینه مدیریت می‌کند و پس از اتمام زمان، کالبک را در صف Macrotask قرار می‌دهد.</p>
+    <pre><code>console.log('Start');
+setTimeout(() => {
+  console.log('This is a Macrotask');
+}, 0);
+console.log('End');</code></pre>
+    <p><b>خروجی:</b></p>
+    <pre><code>Start
+End
+This is a Macrotask</code></pre>
+  </div>
+
+  <div class="example-card">
+    <h4>۲. رویدادهای کاربر (User Events)</h4>
+    <p>تعامل کاربر با صفحه (مثل کلیک، حرکت موس، فشردن کلید) یک Macrotask ایجاد می‌کند. کالبک event listener شما در صف Macrotask قرار می‌گیرد.</p>
+    <pre><code>// HTML: &lt;button id="my-btn"&gt;Click Me&lt;/button&gt;
+const btn = document.getElementById('my-btn');
+btn.addEventListener('click', () => {
+  console.log('Button was clicked! (Macrotask)');
+});</code></pre>
+    <p><b>خروجی (بعد از کلیک):</b></p>
+    <pre><code>Button was clicked! (Macrotask)</code></pre>
+  </div>
+
+  <div class="example-card">
+    <h4>۳. عملیات ورودی/خروجی (I/O Operations)</h4>
+    <p class="note">(این مثال مخصوص Node.js است)</p>
+    <p>کالبک عملیات I/O (مثل خواندن فایل یا درخواست شبکه) بعد از اتمام کار در پس‌زمینه، به عنوان یک Macrotask در صف قرار می‌گیرد.</p>
+    <pre><code>const fs = require('fs');
+console.log('Requesting file read...');
+fs.readFile('./file.txt', 'utf8', () => {
+  console.log('File has been read! (Macrotask)');
+});</code></pre>
+    <p><b>خروجی:</b></p>
+    <pre><code>Requesting file read...
+File has been read! (Macrotask)</code></pre>
+  </div>
+
+  <h2>۵. Web APIs: ابرقدرت‌های مرورگر</h2>
+  <p>Web APIها ابزارهایی هستند که توسط محیط مرورگر ارائه می‌شوند و به کد شما اجازه می‌دهند با دنیای خارج از موتور V8 تعامل داشته باشد. وقتی شما تابعی مانند <code>setTimeout</code> یا <code>fetch</code> را فراخوانی می‌کنید، در واقع در حال استفاده از یک Web API هستید. موتور جاوا اسکریپت این درخواست را به مرورگر واگذار می‌کند. مرورگر کار را در پس‌زمینه انجام می‌دهد و پس از اتمام، کالبک مربوطه را در صف مناسب قرار می‌دهد تا Event Loop آن را به Call Stack برگرداند.</p>
+
+  <h2>۶. دموی زنده با شبیه‌ساز</h2>
+  <p>در این بخش از ارائه، از شبیه‌ساز تعاملی ساخته شده برای نمایش بصری مفاهیم استفاده خواهیم کرد. هر سناریو برای نشان دادن یک جنبه کلیدی از عملکرد Event Loop طراحی شده است.</p>
+
+  <h2>۷. جمع‌آوری زباله (Garbage Collection)</h2>
+  <p>این فرآیندی خودکار برای آزادسازی حافظه در <strong>Heap</strong> است. Garbage Collector (GC) وظیفه پیدا کردن و حذف آبجکت‌هایی را دارد که دیگر در برنامه قابل دسترسی نیستند. الگوریتم اصلی آن "Mark-and-Sweep" نام دارد که در آن ابتدا تمام آبجکت‌های قابل دسترس علامت‌گذاری شده و سپس بقیه آبجکت‌ها از حافظه پاک می‌شوند.</p>
+
+  <h2>۸. جمع‌بندی و نکات کلیدی</h2>
+  <ul>
+    <li>جاوا اسکریپت با Event Loop به همروندی دست پیدا می‌کند.</li>
+    <li>Microtaskها (Promises) بر Macrotaskها (setTimeout) اولویت دارند.</li>
+    <li>درک این مدل به نوشتن کدهای بهینه‌تر و دیباگ کردن مشکلات async کمک می‌کند.</li>
+  </ul>
+</div>
+</body>
+</html>
